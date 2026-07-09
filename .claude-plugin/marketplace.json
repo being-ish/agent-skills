@@ -1,0 +1,13 @@
+{
+  "name": "being-ish",
+  "owner": {
+    "name": "being-ish",
+    "email": "dev@being-i.sh"
+  },
+  "description": "being-ish のエージェントスキル集",
+  "version": "0.1.0",
+  "metadata": {
+    "pluginRoot": "./plugins"
+  },
+  "plugins": []
+}
