@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "plan-tasks",
+  "displayName": "Resumable Task Planner",
+  "description": "大きめの課題をタスクに分け、並べ替えてフェイズ化し、セッションまたいで使えるタスクリストに分解する",
+  "version": "1.0.0",
+  "author": {
+    "name": "being-ish",
+    "email": "dev@being-i.sh"
+  },
+  "repository": "https://github.com/being-ish/agent-skills",
+  "license": "MIT",
+  "keywords": [
+    "tasks",
+    "planning",
+    "artifact"
+  ]
+}
