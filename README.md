@@ -28,7 +28,14 @@ plugins/<plugin-name>/
 
 ### plugin.json を書く
 
-[plugin.json](https://code.claude.com/docs/en/plugins-reference) に最低限の情報を書く。`description` には何をするかの概要を書く。`version` は plugin.json だけに書く。更新はバンプしたときだけ配られるので、リリース時にバンプを忘れない。
+[plugin.json](https://code.claude.com/docs/en/plugins-reference) に最低限の情報を書く。
+
+| フィールド    | 内容                                                                    |
+|---------------|-------------------------------------------------------------------------|
+| `name`        | 端的に挙動を表す名前とする                                              |
+| `description` | 何をするかの概要を書く                                                  |
+| `version`     | 更新はバンプしたときだけ配られるので、リリース時にバンプを忘れないこと  |
+
 
 ```json
 {
@@ -40,7 +47,14 @@ plugins/<plugin-name>/
 
 ### marketplace.json にエントリーを追加する
 
-[marketplace.json](https://code.claude.com/docs/en/plugin-marketplaces) の `plugins` 配列にエントリーを追加する。`metadata.pluginRoot` が `./plugins` なので `source` はディレクトリー名だけでよい。`description` はインストール前の一覧で読まれるため、導入する利点を書く。`name` は plugin.json と必ず一致させる。食い違うとこちらの名前がインストールや設定のキーに、plugin.json 側の名前がコンポーネントの名前空間に使われて混乱する。`version` はここには書かない。
+[marketplace.json](https://code.claude.com/docs/en/plugin-marketplaces) の `plugins` 配列にエントリーを追加する。
+
+| フィールド    | 内容                                                                |
+|---------------|---------------------------------------------------------------------|
+| `name`        | plugin.json の `name` と一致させる。違うとユーザーの混乱の元になる  |
+| `source`      | プロジェクトルートからの相対パス                                    |
+| `description` | 導入する利点を書く。インストール前の一覧で読まれる                  |
+| `version`     | plugin.json の値を正とするので、ここには書かない                    |
 
 ```json
 {
