@@ -9,5 +9,11 @@
   "metadata": {
     "pluginRoot": "./plugins"
   },
-  "plugins": []
+  "plugins": [
+    {
+      "name": "plan-tasks",
+      "source": "plan-tasks",
+      "description": "複数セッションで対応すべき大きめの課題を分解して作業のベースにできるスキル"
+    }
+  ]
 }
