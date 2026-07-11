@@ -17,11 +17,12 @@ if ! jq empty "$MARKETPLACE" 2>/dev/null; then
   exit 1
 fi
 
+plugin_root=$(jq -r '.metadata.pluginRoot // "./plugins"' "$MARKETPLACE")
 tab=$(printf '\t')
 plugin_list=$(jq -r '.plugins[] | [.name, .source] | @tsv' "$MARKETPLACE")
 
 while IFS="$tab" read -r name source; do
-  dir="$source"
+  dir="$plugin_root/$source"
   if [ ! -d "$dir" ]; then
     fail "$name: ディレクトリ $dir が存在しない"
     continue

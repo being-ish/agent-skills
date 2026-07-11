@@ -6,10 +6,13 @@
   },
   "description": "being-ish のエージェントスキル集",
   "version": "0.1.0",
+  "metadata": {
+    "pluginRoot": "./plugins"
+  },
   "plugins": [
     {
       "name": "plan-tasks",
-      "source": "./plugins/plan-tasks",
+      "source": "./plan-tasks",
       "description": "複数セッションで対応すべき大きめの課題を分解して作業のベースにできるスキル"
     }
   ]
