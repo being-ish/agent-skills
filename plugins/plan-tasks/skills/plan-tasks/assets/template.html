@@ -14,7 +14,8 @@
   - .chip   フェイズ状態のピル
   - .task   1 項目
     - 左の .box は完了で class="box done" にすると緑の✓
-    - 右の .task-body は先頭に .tnum 番号バッジ、任意で .why 補足
+    - 右の .task-body は先頭に .tnum 番号バッジ、任意で .why 補足、任意で .deps 前提行
+    - .deps は前提タスクがあるときだけ書く。前提 1 つにつき .dep バッジ 1 つを並べる
   - .prov   任意の注記ボックス
   - footer  任意。参照リンクなど
 
@@ -204,6 +205,12 @@
     padding: 0.05em 0.4em; border-radius: 5px; margin-right: 0.5em; vertical-align: 0.08em;
   }
   .task-body .why { display: block; color: var(--ink-2); font-size: 0.85rem; margin-top: 0.15rem; }
+  .task-body .deps { display: block; color: var(--ink-3); font-size: 0.82rem; margin-top: 0.15rem; }
+  .dep {
+    font-family: var(--mono); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em;
+    color: var(--ink-3); background: var(--surface-2); border: 1px solid var(--border-strong);
+    padding: 0.05em 0.4em; border-radius: 5px; margin-right: 0.3em; vertical-align: 0.08em;
+  }
 
   /* 任意の注記ボックス */
   .prov {
@@ -250,7 +257,9 @@
       </li>
       <li class="task">
         <span class="box"></span>
-        <span class="task-body"><span class="tnum">2</span>__未完タスク__</span>
+        <span class="task-body"><span class="tnum">2</span>__未完タスク__
+          <span class="deps">前提 <span class="dep">__フェイズ番号-タスク番号__</span> <span class="dep">__フェイズ番号-タスク番号__</span></span>
+        </span>
       </li>
     </ul>
   </section>
