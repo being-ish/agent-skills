@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh scripts/validate.sh >/dev/null || exit 2",
+            "statusMessage": "validate.sh を実行中",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
+}
