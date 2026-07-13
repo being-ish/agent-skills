@@ -12,6 +12,14 @@ fail() {
   errors=$((errors + 1))
 }
 
+if ! command -v claude >/dev/null 2>&1; then
+  fail "claude コマンドが見つからない"
+else
+  if ! claude plugin validate .; then
+    fail "marketplace.json の claude plugin validate に失敗した"
+  fi
+fi
+
 if ! jq empty "$MARKETPLACE" 2>/dev/null; then
   fail "$MARKETPLACE が JSON としてパースできない"
   exit 1
@@ -21,30 +29,18 @@ tab=$(printf '\t')
 plugin_list=$(jq -r '.plugins[] | [.name, .source] | @tsv' "$MARKETPLACE")
 
 while IFS="$tab" read -r name source; do
-  dir="$source"
-  if [ ! -d "$dir" ]; then
-    fail "$name: ディレクトリ $dir が存在しない"
-    continue
-  fi
-
-  manifest="$dir/.claude-plugin/plugin.json"
-  if [ ! -f "$manifest" ]; then
-    fail "$name: $manifest が存在しない"
-    continue
-  fi
-
+  manifest="$source/.claude-plugin/plugin.json"
   if ! jq empty "$manifest" 2>/dev/null; then
-    fail "$name: $manifest が JSON としてパースできない"
     continue
   fi
 
   plugin_name=$(jq -r '.name' "$manifest")
   if [ "$plugin_name" != "$name" ]; then
-    fail "$name: $manifest の name が \"$plugin_name\" で一致しない"
+    fail "$name: $manifest の name が \"$plugin_name\" と一致しない"
   fi
 
-  if ! ls "$dir"/skills/*/SKILL.md >/dev/null 2>&1; then
-    fail "$name: $dir/skills/*/SKILL.md が存在しない"
+  if ! ls "$source"/skills/*/SKILL.md >/dev/null 2>&1; then
+    fail "$name: $source/skills/*/SKILL.md が存在しない"
   fi
 done <<EOF
 $plugin_list
