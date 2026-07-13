@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "dev-docs",
+  "displayName": "Dev Docs Generator",
+  "description": "PRD、Design Doc、ADR を生成・更新するスキル集",
+  "version": "1.0.0",
+  "author": {
+    "name": "being-ish",
+    "email": "dev@being-i.sh"
+  },
+  "repository": "https://github.com/being-ish/agent-skills",
+  "license": "MIT",
+  "keywords": [
+    "documentation",
+    "prd",
+    "design-doc",
+    "adr"
+  ]
+}

@@ -11,6 +11,11 @@
       "name": "plan-tasks",
       "source": "./plugins/plan-tasks",
       "description": "複数セッションで対応すべき大きめの課題を分解して作業のベースにできるスキル"
+    },
+    {
+      "name": "dev-docs",
+      "source": "./plugins/dev-docs",
+      "description": "PRD、Design Doc、ADR を生成・更新するスキル集"
     }
   ]
 }
