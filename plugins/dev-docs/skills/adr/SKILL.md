@@ -1,12 +1,24 @@
 ---
 name: adr
 description: ADR を生成・更新する。方針決定、技術選定、設計判断時の経緯の記録に使う
-disable-model-invocation: true
 ---
 
 # ADR 生成・更新
 
 ADR: Architecture Decision Record は方針決定、技術選定、設計判断の記録。
+
+## ドキュメント間の関係
+
+| ドキュメント | 書くもの |
+|---|---|
+| PRD | 要件、制約、スコープ |
+| ADR | 決定とその理由 |
+| design doc | 実現方法、現時点の設計 |
+
+- 他のドキュメント種別に属する内容は書かない
+- 参照方向は PRD が上流、ADR / design doc が下流
+- リンクは下流から上流へのみ張る
+  - PRD から ADR / design doc へはリンクしない
 
 ## feature とは
 
