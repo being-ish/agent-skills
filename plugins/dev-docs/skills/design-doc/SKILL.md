@@ -1,12 +1,24 @@
 ---
 name: design-doc
 description: Design Docを生成・更新する。大まかなアーキテクチャー設計やどう作るかの定義に使う
-disable-model-invocation: true
 ---
 
 # Design Doc 生成・更新
 
 Design Doc はどう作るか、現時点での設計を記載する。
+
+## ドキュメント間の関係
+
+| ドキュメント | 書くもの |
+|---|---|
+| PRD | 要件、制約、スコープ |
+| ADR | 決定とその理由 |
+| design doc | 実現方法、現時点の設計 |
+
+- 他のドキュメント種別に属する内容は書かない
+- 参照方向は PRD が上流、ADR / design doc が下流
+- リンクは下流から上流へのみ張る
+  - PRD から ADR / design doc へはリンクしない
 
 ## feature とは
 
