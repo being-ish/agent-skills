@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
   "name": "dev-docs",
   "displayName": "Dev Docs Generator",
   "description": "PRD、Design Doc、ADR を生成・更新するスキル集",
