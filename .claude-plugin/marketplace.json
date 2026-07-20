@@ -16,6 +16,11 @@
       "name": "dev-docs",
       "source": "./plugins/dev-docs",
       "description": "PRD、Design Doc、ADR を生成・更新するスキル集"
+    },
+    {
+      "name": "ja-markdown-style",
+      "source": "./plugins/ja-markdown-style",
+      "description": "日本語 Markdown 文書を書くためのツール"
     }
   ]
 }

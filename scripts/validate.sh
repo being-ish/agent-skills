@@ -39,12 +39,28 @@ while IFS="$tab" read -r name source; do
     fail "$name: $manifest の name が \"$plugin_name\" と一致しない"
   fi
 
-  if ! ls "$source"/skills/*/SKILL.md >/dev/null 2>&1; then
-    fail "$name: $source/skills/*/SKILL.md が存在しない"
+  has_skill=0
+  has_hooks=0
+  ls "$source"/skills/*/SKILL.md >/dev/null 2>&1 && has_skill=1
+  [ -f "$source/hooks/hooks.json" ] && has_hooks=1
+
+  if [ "$has_skill" -eq 0 ] && [ "$has_hooks" -eq 0 ]; then
+    fail "$name: $source/skills/*/SKILL.md も $source/hooks/hooks.json も存在しない"
+  fi
+
+  if [ "$has_hooks" -eq 1 ] && ! jq empty "$source/hooks/hooks.json" 2>/dev/null; then
+    fail "$name: $source/hooks/hooks.json が JSON としてパースできない"
   fi
 done <<EOF
 $plugin_list
 EOF
+
+for test_runner in tests/*/run.sh; do
+  [ -f "$test_runner" ] || continue
+  if ! sh "$test_runner"; then
+    fail "$test_runner が失敗した"
+  fi
+done
 
 if [ "$errors" -gt 0 ]; then
   echo "検証失敗: $errors 件" >&2
