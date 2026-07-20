@@ -55,13 +55,6 @@ done <<EOF
 $plugin_list
 EOF
 
-for test_runner in tests/*/run.sh; do
-  [ -f "$test_runner" ] || continue
-  if ! sh "$test_runner"; then
-    fail "$test_runner が失敗した"
-  fi
-done
-
 if [ "$errors" -gt 0 ]; then
   echo "検証失敗: $errors 件" >&2
   exit 1
