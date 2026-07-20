@@ -5,7 +5,7 @@
     "email": "dev@being-i.sh"
   },
   "description": "being-ish のエージェントスキル集",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "plugins": [
     {
       "name": "plan-tasks",
@@ -16,6 +16,11 @@
       "name": "dev-docs",
       "source": "./plugins/dev-docs",
       "description": "PRD、Design Doc、ADR を生成・更新するスキル集"
+    },
+    {
+      "name": "ja-markdown-style",
+      "source": "./plugins/ja-markdown-style",
+      "description": "日本語 Markdown 文書を書くためのツール"
     }
   ]
 }

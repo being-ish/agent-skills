@@ -1,0 +1,18 @@
+{
+  "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "ja-markdown-style",
+  "displayName": "Japanese Markdown Style",
+  "description": "日本語 Markdown 文書の書き方ルールと事後検査を提供するプラグイン",
+  "version": "1.0.0",
+  "author": {
+    "name": "being-ish",
+    "email": "dev@being-i.sh"
+  },
+  "repository": "https://github.com/being-ish/agent-skills",
+  "license": "MIT",
+  "keywords": [
+    "hooks",
+    "writing",
+    "japanese"
+  ]
+}
