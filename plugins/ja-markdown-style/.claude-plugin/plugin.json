@@ -3,7 +3,7 @@
   "name": "ja-markdown-style",
   "displayName": "Japanese Markdown Style",
   "description": "日本語 Markdown 文書の書き方ルールと事後検査を提供するプラグイン",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "being-ish",
     "email": "dev@being-i.sh"
