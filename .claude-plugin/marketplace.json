@@ -21,6 +21,11 @@
       "name": "ja-markdown-style",
       "source": "./plugins/ja-markdown-style",
       "description": "日本語 Markdown 文書を書くためのツール"
+    },
+    {
+      "name": "coding-style-common",
+      "source": "./plugins/coding-style-common",
+      "description": "プログラミング言語共通の書き方ルールを提供するプラグイン"
     }
   ]
 }
