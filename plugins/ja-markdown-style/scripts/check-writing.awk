@@ -1,5 +1,6 @@
 BEGIN {
   in_code_block = 0
+  in_frontmatter = 0
   violations = 0
   kana = "ぁ-んァ-ヶー一-龠"
   alnum = "0-9A-Za-z"
@@ -12,6 +13,15 @@ function report(msg) {
 
 {
   lineno = NR
+
+  if (NR == 1 && $0 ~ /^---[[:space:]]*$/) {
+    in_frontmatter = 1
+    next
+  }
+  if (in_frontmatter) {
+    if ($0 ~ /^(---|\.\.\.)[[:space:]]*$/) in_frontmatter = 0
+    next
+  }
 
   if ($0 ~ /^[[:space:]]*```/) {
     in_code_block = !in_code_block
