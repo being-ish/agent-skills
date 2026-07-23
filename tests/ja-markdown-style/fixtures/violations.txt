@@ -1,3 +1,12 @@
+---
+name: sample
+description: 違反検出のテスト用fixture
+metadata:
+  tags:
+    - fixture
+    - fail
+---
+
 # テスト
 
 - test1テスト
@@ -9,3 +18,13 @@
 - ダッシュ—区切り
 - 複数文です。これも文です。
 - 設計・実装・テストを行う
+
+コードブロックの後です。
+
+```
+code block
+```
+
+ブロック後もviolationは検出される
+
+`code` の外の文中列挙は設計・実装とする
