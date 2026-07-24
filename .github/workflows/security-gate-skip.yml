@@ -1,0 +1,15 @@
+# このワークフローは security-gate.yml のミラーで、対象外 PR に即成功を返して required check を pending にしないための仕組み
+# security-gate.yml の on.pull_request.paths を変更したときは、この paths-ignore も同じパターンに同期すること
+name: Security Gate
+
+on:
+  pull_request:
+    paths-ignore:
+      - .github/workflows/**
+
+jobs:
+  validate-actions:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - run: echo "No workflow changes, skipping validating Actions"
