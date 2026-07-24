@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/scripts/remind-skill.sh\"",
+            "statusMessage": "コーディング規約を確認中",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "coding-style-common",
+  "displayName": "Common Coding Style",
+  "description": "特定の言語に依存しない、プログラミング言語共通の書き方の指示やチェックルールを提供するプラグイン",
+  "version": "0.1.0",
+  "author": {
+    "name": "being-ish",
+    "email": "dev@being-i.sh"
+  },
+  "repository": "https://github.com/being-ish/agent-skills",
+  "license": "MIT",
+  "keywords": [
+    "coding-style",
+    "guidelines",
+    "code-quality",
+    "refactoring",
+    "hooks"
+  ]
+}
