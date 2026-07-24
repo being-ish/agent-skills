@@ -1,3 +1,5 @@
+# on.pull_request.paths を変更したときは、security-gate-skip.yml の paths-ignore も同じパターンに同期すること
+# security-gate-skip.yml はこのワークフローのミラーで、対象外 PR に即成功を返して required check を pending にしないための仕組み
 name: Security Gate
 
 on:
