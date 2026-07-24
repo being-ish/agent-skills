@@ -1,0 +1,37 @@
+name: Security Gate
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/**
+  schedule:
+    - cron: "0 18 * * 0"
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  validate-actions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: zizmorcore/zizmor-action@6fc4b006235f201fdab3722e17240ab420d580e5 # v0.6.1
+
+  # schedule 実行の失敗通知は workflow ファイルの最終更新者にしか届かないため、
+  # Issue を作成してリポジトリを watch している全員に知らせる
+  notify-failure:
+    needs: validate-actions
+    if: failure() && github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - run: |
+          gh issue create \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Security Gate failed ($(date -u +%Y-%m-%d))" \
+            --body "schedule 実行が失敗しました。詳細は $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID を確認してください。"
+        env:
+          GH_TOKEN: ${{ github.token }}
