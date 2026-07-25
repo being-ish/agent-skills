@@ -2,6 +2,8 @@
 name: ja-markdown-style
 description: 日本語の Markdown 文書を書く、直す前に必ず読む。README、設計文書、ADR、議事録など日本語ドキュメントの作成、編集、レビューすべてが対象。文章構成と表記の判断が要るスタイルガイド
 user-invocable: false
+paths:
+  - "**/*.md"
 ---
 
 # 日本語 Markdown スタイルガイド
