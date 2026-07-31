@@ -26,6 +26,11 @@
       "name": "coding-style-common",
       "source": "./plugins/coding-style-common",
       "description": "プログラミング言語共通の書き方ルールを提供するプラグイン"
+    },
+    {
+      "name": "testing-style",
+      "source": "./plugins/testing-style",
+      "description": "テストの書き方の指針を提供するプラグイン"
     }
   ]
 }
