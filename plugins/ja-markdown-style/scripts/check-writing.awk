@@ -29,9 +29,13 @@ function report(msg) {
   }
   if (in_code_block) next
 
-  # コードスパンを除外してから検査する
+  # 引用は原文のまま書くため検査しない
+  if ($0 ~ /^[[:space:]]*([-*] |[0-9]+\. )?>/) next
+
+  # コードスパンとインライン引用を除外してから検査する
   checked = $0
   gsub(/`[^`]*`/, "", checked)
+  gsub(/<q>[^<]*<\/q>/, "", checked)
 
   # 和文と半角英数字の間のスペース
   if (checked ~ ("[" kana "][" alnum "]") || checked ~ ("[" alnum "][" kana "]")) {
