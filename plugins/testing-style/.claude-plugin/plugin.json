@@ -1,0 +1,19 @@
+{
+  "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "testing-style",
+  "displayName": "Testing Style",
+  "description": "テストの書き方の指針を提供するプラグイン",
+  "version": "1.0.0",
+  "author": {
+    "name": "being-ish",
+    "email": "dev@being-i.sh"
+  },
+  "repository": "https://github.com/being-ish/agent-skills",
+  "license": "MIT",
+  "keywords": [
+    "testing",
+    "test-size",
+    "in-source-testing",
+    "code-quality"
+  ]
+}
