@@ -43,6 +43,21 @@ assert_contains() {
   esac
 }
 
+assert_not_contains() {
+  desc="$1"
+  haystack="$2"
+  needle="$3"
+  case "$haystack" in
+    *"$needle"*)
+      echo "NG: $desc: 出力に \"$needle\" が含まれる" >&2
+      failures=$((failures + 1))
+      ;;
+    *)
+      echo "OK: $desc"
+      ;;
+  esac
+}
+
 run_check() {
   file="$1"
   jq -n --arg fp "$file" '{tool_input:{file_path:$fp}}' | sh "$SCRIPT" 2>&1
@@ -75,6 +90,22 @@ if [ -n "$out" ]; then
 else
   echo "OK: clean: 出力が空"
 fi
+
+# 法文書は中黒とリスト内句点のチェックを省く
+cp "$FIXTURES/legal.txt" "$tmpdir/legal.md"
+out=$(run_check "$tmpdir/legal.md")
+rc=$?
+assert_exit "legal: exit code" 2 "$rc"
+assert_contains "legal: 節記号は検出する" "$out" "「§」を使わず「9.1 節」のように書いてください"
+assert_not_contains "legal: 中黒は検出しない" "$out" "文中列挙の区切りに中黒"
+assert_not_contains "legal: リスト内句点は検出しない" "$out" "箇条書き内で句点"
+
+# being-ish 以外のキー配下の kind は文書種別として扱わない
+cp "$FIXTURES/other-kind.txt" "$tmpdir/other-kind.md"
+out=$(run_check "$tmpdir/other-kind.md")
+rc=$?
+assert_exit "other-kind: exit code" 2 "$rc"
+assert_contains "other-kind: 中黒を検出する" "$out" "文中列挙の区切りに中黒"
 
 # 対象外拡張子
 # 違反を含む内容でも検査自体が走らないことを確認する
