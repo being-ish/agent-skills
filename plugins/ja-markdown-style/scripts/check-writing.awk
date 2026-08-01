@@ -4,6 +4,14 @@ BEGIN {
   violations = 0
   kana = "ぁ-んァ-ヶー一-龠"
   alnum = "0-9A-Za-z"
+
+  # 文書設定取得用
+  in_being_ish = 0
+  kind = ""
+
+  # 文書ごとに適用するチェックを定義
+  skip["legal", "nakaguro"] = 1
+  skip["legal", "list-period"] = 1
 }
 
 function report(msg) {
@@ -20,6 +28,13 @@ function report(msg) {
   }
   if (in_frontmatter) {
     if ($0 ~ /^(---|\.\.\.)[[:space:]]*$/) in_frontmatter = 0
+    else if ($0 ~ /^being-ish:[[:space:]]*$/) in_being_ish = 1
+    else if ($0 ~ /^[^[:space:]]/) in_being_ish = 0
+    else if (in_being_ish && match($0, /^[[:space:]]+kind:[[:space:]]*/)) {
+      kind = substr($0, RLENGTH + 1)
+      sub(/[[:space:]]+$/, "", kind)
+      gsub(/["']/, "", kind)
+    }
     next
   }
 
@@ -71,12 +86,12 @@ function report(msg) {
   }
 
   # 箇条書きは 1 アイテム 1 文
-  if (checked ~ /^[[:space:]]*([-*]|[0-9]+\.) / && index(checked, "。") > 0) {
+  if (!((kind, "list-period") in skip) && checked ~ /^[[:space:]]*([-*]|[0-9]+\.) / && index(checked, "。") > 0) {
     report("箇条書き内で句点「。」が使われています。1 アイテム 1 文に直し、複数文は下位項目にぶら下げてください")
   }
 
   # 文中列挙の中黒
-  if (index(checked, "・") > 0) {
+  if (!((kind, "nakaguro") in skip) && index(checked, "・") > 0) {
     report("文中列挙の区切りに中黒「・」を使わず読点「、」を使ってください")
   }
 }

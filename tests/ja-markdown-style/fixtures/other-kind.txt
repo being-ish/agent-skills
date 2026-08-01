@@ -1,0 +1,11 @@
+---
+name: sample
+kind: legal
+other:
+  kind: legal
+description: being-ish配下以外のkindが無視されることのテスト用fixture
+---
+
+# テスト
+
+設計・実装を行う
