@@ -10,7 +10,6 @@ BEGIN {
   kind = ""
 
   # 文書ごとに適用するチェックを定義
-  skip["legal", "nakaguro"] = 1
   skip["legal", "list-period"] = 1
 }
 
@@ -64,7 +63,7 @@ function report(msg) {
 
   # 文末コロン(欧文式の列挙導入)
   if (checked ~ /[:：][[:space:]]*$/) {
-    report("文末コロンで列挙・説明を導入せず地の文で書いてください")
+    report("文末コロンで列挙や説明を繋げず、地の文で書いてください")
   }
 
   # §
@@ -88,11 +87,6 @@ function report(msg) {
   # 箇条書きは 1 アイテム 1 文
   if (!((kind, "list-period") in skip) && checked ~ /^[[:space:]]*([-*]|[0-9]+\.) / && index(checked, "。") > 0) {
     report("箇条書き内で句点「。」が使われています。1 アイテム 1 文に直し、複数文は下位項目にぶら下げてください")
-  }
-
-  # 文中列挙の中黒
-  if (!((kind, "nakaguro") in skip) && index(checked, "・") > 0) {
-    report("文中列挙の区切りに中黒「・」を使わず読点「、」を使ってください")
   }
 }
 
