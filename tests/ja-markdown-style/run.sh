@@ -70,14 +70,13 @@ rc=$?
 assert_exit "violations: exit code" 2 "$rc"
 assert_contains "violations: 和文英数字スペース" "$out" "和文と半角英数字の間に半角スペースがありません"
 assert_contains "violations: ダッシュ" "$out" "ダッシュ「—」を使わず読点で区切るか文を分けてください"
-assert_contains "violations: 文末コロン" "$out" "文末コロンで列挙・説明を導入せず地の文で書いてください"
+assert_contains "violations: 文末コロン" "$out" "文末コロンで列挙や説明を繋げず、地の文で書いてください"
 assert_contains "violations: §" "$out" "「§」を使わず「9.1 節」のように書いてください"
 assert_contains "violations: 以下のように" "$out" "「以下のように」を使わず範囲を明示してください"
 assert_contains "violations: インデント" "$out" "箇条書きのインデントは半角スペース 4 の倍数にしてください"
 assert_contains "violations: 1アイテム1文" "$out" "箇条書き内で句点「。」が使われています"
-assert_contains "violations: 中黒" "$out" "文中列挙の区切りに中黒「・」を使わず読点「、」を使ってください"
 assert_contains "violations: コードブロック後も検査" "$out" "ブロック後もviolationは検出される"
-assert_contains "violations: インラインコード外" "$out" "の外の文中列挙は設計・実装とする"
+assert_contains "violations: インラインコード外" "$out" "の外はtest1検査される"
 
 # 違反なしの文書
 cp "$FIXTURES/clean.txt" "$tmpdir/clean.md"
@@ -91,13 +90,12 @@ else
   echo "OK: clean: 出力が空"
 fi
 
-# 法文書は中黒とリスト内句点のチェックを省く
+# 法文書はリスト内句点のチェックを省く
 cp "$FIXTURES/legal.txt" "$tmpdir/legal.md"
 out=$(run_check "$tmpdir/legal.md")
 rc=$?
 assert_exit "legal: exit code" 2 "$rc"
 assert_contains "legal: 節記号は検出する" "$out" "「§」を使わず「9.1 節」のように書いてください"
-assert_not_contains "legal: 中黒は検出しない" "$out" "文中列挙の区切りに中黒"
 assert_not_contains "legal: リスト内句点は検出しない" "$out" "箇条書き内で句点"
 
 # being-ish 以外のキー配下の kind は文書種別として扱わない
@@ -105,7 +103,7 @@ cp "$FIXTURES/other-kind.txt" "$tmpdir/other-kind.md"
 out=$(run_check "$tmpdir/other-kind.md")
 rc=$?
 assert_exit "other-kind: exit code" 2 "$rc"
-assert_contains "other-kind: 中黒を検出する" "$out" "文中列挙の区切りに中黒"
+assert_contains "other-kind: リスト内句点を検出する" "$out" "箇条書き内で句点"
 
 # 対象外拡張子
 # 違反を含む内容でも検査自体が走らないことを確認する
