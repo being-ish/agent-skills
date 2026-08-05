@@ -1,11 +1,11 @@
 ---
 name: prd
-description: PRD を生成・更新する。要件定義に使う。
+description: PRD を生成、更新する。要件定義に使う。
 ---
 
-# PRD 生成・更新
+# PRD の生成と更新
 
-PRD: Product Requirements Document は何を作るか・なぜ作るかを定義する。
+PRD は Product Requirements Document の略で、何を作るか、なぜ作るかを定義する。
 
 ## ドキュメント間の関係
 
@@ -14,11 +14,12 @@ PRD: Product Requirements Document は何を作るか・なぜ作るかを定義
 | PRD | 要件、制約、スコープ |
 | ADR | 決定とその理由 |
 | design doc | 実現方法、現時点の設計 |
+| runbook | 運用作業の手順 |
 
 - 他のドキュメント種別に属する内容は書かない
-- 参照方向は PRD が上流、ADR / design doc が下流
+- 参照方向は PRD が上流、ADR / design doc / runbook が下流
 - リンクは下流から上流へのみ張る
-    - PRD から ADR / design doc へはリンクしない
+    - PRD から ADR / design doc / runbook へはリンクしない
 
 ## feature とは
 
@@ -28,15 +29,19 @@ Screaming Architecture における機能の凝集単位。
 
 ## 出力先
 
-- システム全体: `/docs/PRD.md`
-- feature 固有: `/docs/features/<feature-name>/PRD.md`
+| 対象 | 出力先 |
+|---|---|
+| システム全体 | `/docs/PRD.md` |
+| feature 固有 | `/docs/features/<feature-name>/PRD.md` |
 
 `/docs/features/` が存在しないリポジトリーでは、出力先をユーザーに確認する。
 
 ## テンプレート
 
-- システム全体: `${CLAUDE_SKILL_DIR}/references/system-prd.md`
-- feature 固有: `${CLAUDE_SKILL_DIR}/references/feature-prd.md`
+| 対象 | テンプレート |
+|---|---|
+| システム全体 | `${CLAUDE_SKILL_DIR}/references/system-prd.md` |
+| feature 固有 | `${CLAUDE_SKILL_DIR}/references/feature-prd.md` |
 
 ## 手順
 
@@ -46,9 +51,10 @@ Screaming Architecture における機能の凝集単位。
     - 不明ならユーザーに確認する
 2. 該当するテンプレートを読み込む
 3. 既存の PRD ファイルがあれば読み込み、更新対象とする
-4. ユーザーの要求と既存情報をもとに PRD を作成・更新する
+4. ユーザーの要求と既存情報をもとに PRD を作成、更新する
     - 情報が不足しているセクションは「TBD」と記載し、ユーザーに確認する
     - その他はテンプレートのセクション構成に従う
 5. Design Doc や ADR など関連ドキュメントが存在する場合、整合性をチェックし、矛盾があればユーザーに報告する
-6. GitHub Issues を確認し、PRD の変更に伴い Issues の追加・変更・削除が必要であればユーザーに進言する
-7. 出力先に PRD を書き出す
+6. plan-tasks スキルで作成したタスクリスト Artifact が本作業に存在する場合、PRD の変更に伴う更新が必要かを確認し、必要であれば更新する
+7. GitHub Issues を確認し、PRD の変更に伴い Issues の追加、変更、削除が必要であればユーザーに進言する
+8. 出力先に PRD を書き出す
