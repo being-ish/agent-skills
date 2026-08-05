@@ -77,6 +77,9 @@ assert_contains "violations: インデント" "$out" "箇条書きのインデ�
 assert_contains "violations: 1アイテム1文" "$out" "箇条書き内で句点「。」が使われています"
 assert_contains "violations: コードブロック後も検査" "$out" "ブロック後もviolationは検出される"
 assert_contains "violations: インラインコード外" "$out" "の外はtest1検査される"
+assert_contains "violations: 同一行の同一ルール複数" "$out" "ダッシュ「—」を使わず読点で区切るか文を分けてください (2 箇所)"
+assert_contains "violations: 同一行の句点複数" "$out" "箇条書き内で句点「。」が使われています。1 アイテム 1 文に直し、複数文は下位項目にぶら下げてください (2 箇所)"
+assert_not_contains "violations: 1 件のとき件数表記なし" "$out" "(1 箇所)"
 
 # 違反なしの文書
 cp "$FIXTURES/clean.txt" "$tmpdir/clean.md"
