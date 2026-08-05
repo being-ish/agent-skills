@@ -13,9 +13,20 @@ BEGIN {
   skip["legal", "list-period"] = 1
 }
 
-function report(msg) {
-  print lineno ": " msg ": " $0 > "/dev/stderr"
-  violations++
+function count_matches(s, re,    n) {
+  n = 0
+  while (match(s, re)) {
+    n++
+    s = substr(s, RSTART + RLENGTH)
+  }
+  return n
+}
+
+function report(msg, n) {
+  if (n == "") n = 1
+  if (n < 1) return
+  print lineno ": " msg (n > 1 ? " (" n " 箇所)" : "") ": " $0 > "/dev/stderr"
+  violations += n
 }
 
 {
@@ -52,14 +63,13 @@ function report(msg) {
   gsub(/<q>[^<]*<\/q>/, "", checked)
 
   # 和文と半角英数字の間のスペース
-  if (checked ~ ("[" kana "][" alnum "]") || checked ~ ("[" alnum "][" kana "]")) {
-    report("和文と半角英数字の間に半角スペースがありません")
+  n = count_matches(checked, "[" kana "][" alnum "]") + count_matches(checked, "[" alnum "][" kana "]")
+  if (n > 0) {
+    report("和文と半角英数字の間に半角スペースがありません", n)
   }
 
   # ダッシュ「—」
-  if (checked ~ /—/) {
-    report("ダッシュ「—」を使わず読点で区切るか文を分けてください")
-  }
+  report("ダッシュ「—」を使わず読点で区切るか文を分けてください", count_matches(checked, "—"))
 
   # 文末コロン(欧文式の列挙導入)
   if (checked ~ /[:：][[:space:]]*$/) {
@@ -67,14 +77,10 @@ function report(msg) {
   }
 
   # §
-  if (checked ~ /§/) {
-    report("「§」を使わず「9.1 節」のように書いてください")
-  }
+  report("「§」を使わず「9.1 節」のように書いてください", count_matches(checked, "§"))
 
   # 「以下のように」
-  if (index(checked, "以下のように") > 0) {
-    report("「以下のように」を使わず範囲を明示してください")
-  }
+  report("「以下のように」を使わず範囲を明示してください", count_matches(checked, "以下のように"))
 
   # 箇条書きネストのインデント
   if (match(checked, /^[[:space:]]*[-*] /)) {
@@ -85,8 +91,8 @@ function report(msg) {
   }
 
   # 箇条書きは 1 アイテム 1 文
-  if (!((kind, "list-period") in skip) && checked ~ /^[[:space:]]*([-*]|[0-9]+\.) / && index(checked, "。") > 0) {
-    report("箇条書き内で句点「。」が使われています。1 アイテム 1 文に直し、複数文は下位項目にぶら下げてください")
+  if (!((kind, "list-period") in skip) && checked ~ /^[[:space:]]*([-*]|[0-9]+\.) /) {
+    report("箇条書き内で句点「。」が使われています。1 アイテム 1 文に直し、複数文は下位項目にぶら下げてください", count_matches(checked, "。"))
   }
 }
 

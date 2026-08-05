@@ -1,4 +1,4 @@
-# [Feature名] PRD
+# [Feature 名] PRD
 
 ## 制約・前提
 
