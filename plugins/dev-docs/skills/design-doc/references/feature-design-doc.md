@@ -1,4 +1,4 @@
-# [Feature名] design doc
+# [Feature 名] design doc
 
 ## 関連 PRD
 
