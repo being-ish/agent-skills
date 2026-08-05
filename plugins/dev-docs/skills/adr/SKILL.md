@@ -1,9 +1,9 @@
 ---
 name: adr
-description: ADR を生成・更新する。方針決定、技術選定、設計判断時の経緯の記録に使う
+description: ADR を生成、更新する。方針決定、技術選定、設計判断時の経緯の記録に使う
 ---
 
-# ADR 生成・更新
+# ADR の生成と更新
 
 ADR: Architecture Decision Record は方針決定、技術選定、設計判断の記録。
 
@@ -14,11 +14,12 @@ ADR: Architecture Decision Record は方針決定、技術選定、設計判断�
 | PRD | 要件、制約、スコープ |
 | ADR | 決定とその理由 |
 | design doc | 実現方法、現時点の設計 |
+| runbook | 運用作業の手順 |
 
 - 他のドキュメント種別に属する内容は書かない
-- 参照方向は PRD が上流、ADR / design doc が下流
+- 参照方向は PRD が上流、ADR / design doc / runbook が下流
 - リンクは下流から上流へのみ張る
-    - PRD から ADR / design doc へはリンクしない
+    - PRD から ADR / design doc / runbook へはリンクしない
 
 ## feature とは
 
@@ -42,9 +43,9 @@ Screaming Architecture における機能の凝集単位。
 ## 手順
 
 1. 生成 / 更新対象の ADR がシステム横断か feature 固有かを判断する
-   - 単一の feature に閉じる内容なら feature 固有、複数 feature やシステム基盤に関わるならシステム横断とする
-   - `/docs/features/` 以下のディレクトリー一覧を feature の候補として参照する
-   - 不明ならユーザーに確認する
+    - 単一の feature に閉じる内容なら feature 固有、複数 feature やシステム基盤に関わるならシステム横断とする
+    - `/docs/features/` 以下のディレクトリー一覧を feature の候補として参照する
+    - 不明ならユーザーに確認する
 2. テンプレートを読み込む
 3. 出力先ディレクトリの既存 ADR を確認し、次の連番を決定する
 4. ユーザーの要求をもとに ADR を作成する
@@ -56,5 +57,6 @@ Screaming Architecture における機能の凝集単位。
     - 生成 / 更新時は既存 ADR に廃止されるものがないかチェックし、該当があれば旧 ADR のステータスを更新する
     - その他はテンプレートのセクション構成に従う
 5. PRD や design doc など関連ドキュメントが存在する場合、整合性をチェックし、矛盾があればユーザーに報告する
-6. GitHub Issues を確認し、ADR の変更に伴い Issues の追加・変更・削除が必要であればユーザーに進言する
-7. 出力先に ADR を書き出す
+6. plan-tasks スキルで作成したタスクリスト Artifact が本作業に存在する場合、ADR の変更に伴う更新が必要かを確認し、必要であれば更新する
+7. GitHub Issues を確認し、ADR の変更に伴い Issues の追加、変更、削除が必要であればユーザーに進言する
+8. 出力先に ADR を書き出す

@@ -1,4 +1,4 @@
-# [プロダクト名] Design Doc
+# [プロダクト名] design doc
 
 ## 設計概要
 
