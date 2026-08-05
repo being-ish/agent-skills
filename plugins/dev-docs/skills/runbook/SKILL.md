@@ -1,6 +1,6 @@
 ---
 name: runbook
-description: runbook を生成・更新する。定常メンテナンスの手順化、障害対応手順の記録に使う
+description: runbook を生成、更新する。定常メンテナンスの手順化、障害対応手順の記録に使う
 ---
 
 # runbook の生成と更新
