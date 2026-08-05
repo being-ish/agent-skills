@@ -1,4 +1,4 @@
-# [Feature名] Design Doc
+# [Feature名] design doc
 
 ## 関連 PRD
 
@@ -14,7 +14,7 @@ feature 固有の構成図が必要な場合のみ記載。
 
 ## 特記事項
 
-全体 Design Doc のデフォルト方針と異なる点、追加で考慮が必要な点を記載。
+全体 design doc のデフォルト方針と異なる点、追加で考慮が必要な点を記載。
 なければそれを明記する。
 
 ### Cross-cutting Concerns

@@ -1,11 +1,11 @@
 ---
 name: design-doc
-description: Design Docを生成、更新する。大まかなアーキテクチャー設計やどう作るかの定義に使う
+description: design doc を生成、更新する。大まかなアーキテクチャー設計やどう作るかの定義に使う
 ---
 
-# Design Doc の生成と更新
+# design doc の生成と更新
 
-Design Doc はどう作るか、現時点での設計を記載する。
+design doc はどう作るか、現時点での設計を記載する。
 
 ## ドキュメント間の関係
 
@@ -45,17 +45,17 @@ Screaming Architecture における機能の凝集単位。
 
 ## 手順
 
-1. 生成 / 更新対象の Design Doc がシステム全体か feature 固有かを判断する
+1. 生成 / 更新対象の design doc がシステム全体か feature 固有かを判断する
     - 単一の feature に閉じる内容なら feature 固有、複数 feature やシステム基盤に関わるならシステム全体とする
     - `/docs/features/` 以下のディレクトリー一覧を feature の候補として参照する
     - 不明ならユーザーに確認する
 2. 該当するテンプレートを読み込む
-3. 既存の Design Doc があれば読み込み、更新対象とする
-4. ユーザーの要求と既存情報をもとに Design Doc を作成、更新する
+3. 既存の design doc があれば読み込み、更新対象とする
+4. ユーザーの要求と既存情報をもとに design doc を作成、更新する
     - 情報が不足しているセクションは「TBD」と記載し、ユーザーに確認する
-    - feature 固有のものでシステム全体のものと差分がない場合は、システム全体 Design Doc に準ずる旨を明記する
+    - feature 固有のものでシステム全体のものと差分がない場合は、システム全体 design doc に準ずる旨を明記する
     - その他はテンプレートのセクション構成に従う
 5. PRD や ADR など関連ドキュメントが存在する場合、整合性をチェックし、矛盾があればユーザーに報告する
-6. plan-tasks スキルで作成したタスクリスト Artifact が本作業に存在する場合、Design Doc の変更に伴う更新が必要かを確認し、必要であれば更新する
-7. GitHub Issues を確認し、Design Doc の変更に伴い Issues の追加、変更、削除が必要であればユーザーに進言する
-8. 出力先に Design Doc を書き出す
+6. plan-tasks スキルで作成したタスクリスト Artifact が本作業に存在する場合、design doc の変更に伴う更新が必要かを確認し、必要であれば更新する
+7. GitHub Issues を確認し、design doc の変更に伴い Issues の追加、変更、削除が必要であればユーザーに進言する
+8. 出力先に design doc を書き出す
