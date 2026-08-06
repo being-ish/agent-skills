@@ -33,9 +33,3 @@
 
 - 記録を残す場所
 - 再発防止策の検討と Issue の起票
-
-## 関連
-
-- [タイトル](./kebab-case-title.md)
-- ダッシュボード
-- design doc

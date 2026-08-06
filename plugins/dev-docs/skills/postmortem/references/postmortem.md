@@ -68,10 +68,3 @@
 | 内容 | 種別 | Issue |
 |---|---|---|
 | 実行できる粒度で書く | 再発防止 / 検知改善 / 影響緩和 | [#N](リンク) |
-
-## 関連
-
-- [障害対応 runbook](../runbooks/incident/kebab-case-title.md)
-- [design doc](../design-doc.md)
-- [ADR](../adr/NNNN-kebab-case-title.md)
-- [関連する postmortem](./YYYY-MM-DD-kebab-case-title.md)
