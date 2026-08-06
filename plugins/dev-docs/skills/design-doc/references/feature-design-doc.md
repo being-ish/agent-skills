@@ -1,9 +1,5 @@
 # [Feature 名] design doc
 
-## 関連 PRD
-
-- ./PRD.md
-
 ## 設計概要
 
 この機能の技術設計。

@@ -4,10 +4,6 @@
 
 有効 / [NNNN](./NNNN-title.md) により廃止
 
-## 関連 ADR
-
-- [NNNN](./NNNN-title.md)
-
 ## 背景
 
 この判断が必要になった経緯。
