@@ -62,3 +62,6 @@ Screaming Architecture における機能の凝集単位。
 6. plan-tasks スキルで作成したタスクリスト Artifact が本作業に存在する場合、PRD の変更に伴う更新が必要かを確認し、必要であれば更新する
 7. GitHub Issues を確認し、PRD の変更に伴い Issues の追加、変更、削除が必要であればユーザーに進言する
 8. 出力先に PRD を書き出す
+9. Task ツールで `skill-adherence:skill-adherence-checker` sub-agent を起動し、`dev-docs:prd` と書き出したファイルのパスを渡して Skill 違反を検査させる
+    - この sub-agent が使えない環境ではこの手順を省く
+    - 報告された違反を PRD に反映する

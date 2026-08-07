@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/scripts/detect-skill-usage.sh\"",
+            "statusMessage": "Skill 遵守チェックの要否を判定中",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -102,3 +102,10 @@ paths:
 - 外部入力の validation にはアサーションを使わない
     - 境界で validate するなど適切なエラーハンドリングを使う
 - ユーザーが runtime チェックを明示的にオプトアウトしている性能クリティカルな経路は対象外とする
+
+## 作業を終える前に規約への適合を検査する
+
+コードを書き終えたら、Task ツールで `skill-adherence:skill-adherence-checker` sub-agent を起動し、`coding-style-common:coding-style-common` と変更したファイルのパスを渡して規約違反を検査させる。報告された違反はコードに反映する。
+
+- この sub-agent が使えない環境ではこの検査を省く
+- 修正がさらに規約に反していないか注意する
