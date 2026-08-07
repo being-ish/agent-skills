@@ -3,7 +3,7 @@
   "name": "dev-docs",
   "displayName": "Dev Docs Generator",
   "description": "PRD、design doc、ADR、runbook、postmortem を生成、更新するスキル集",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "author": {
     "name": "being-ish",
     "email": "dev@being-i.sh"
