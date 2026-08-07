@@ -1,6 +1,7 @@
 #!/bin/sh
-# Stop 時に transcript を走査し、being-ish の Skill 使用と成果物編集があれば
-# skill-adherence-checker sub-agent によるチェックを main-agent に指示する
+# Stop 時に marketplace の Skill を使った形跡を検知し、
+# skill-adherence スキルによるチェックを main-agent に指示する
+# 使用 Skill と成果物の対応付けはセッションの文脈を持つ main-agent に任せる
 set -u
 
 # この plugin を配布している marketplace 名
@@ -26,91 +27,64 @@ if [ -z "$transcript_path" ] || [ ! -f "$transcript_path" ]; then
   exit 0
 fi
 
-# インストール情報から marketplace 配布の plugin 名を集める
-# transcript より小さく走査が軽いため先に判定する
 if [ ! -f "$INSTALLED_PLUGINS" ]; then
   exit 0
 fi
-marketplace_plugins=$(jq -r '.plugins | keys[]' "$INSTALLED_PLUGINS" 2>/dev/null \
-  | sed -n "s/@${MARKETPLACE}\$//p")
-if [ -z "$marketplace_plugins" ]; then
+
+# インストール済み plugin から marketplace 配布の Skill 名を集める
+# installPath 配下の skills ディレクトリ名が Skill 名になる
+skill_names=""
+plugin_entries=$(jq -r --arg mp "@${MARKETPLACE}" '
+  .plugins
+  | to_entries[]
+  | select(.key | endswith($mp))
+  | (.key | rtrimstr($mp)) + "\t" + (.value[0].installPath // "")
+' "$INSTALLED_PLUGINS" 2>/dev/null)
+
+tab=$(printf '\t')
+while IFS="$tab" read -r plugin install_path; do
+  [ -z "$plugin" ] && continue
+  [ -z "$install_path" ] && continue
+  for skill_dir in "$install_path"/skills/*/; do
+    [ -d "$skill_dir" ] || continue
+    skill=$(basename "$skill_dir")
+    skill_names="$skill_names$plugin:$skill
+"
+  done
+done <<EOF
+$plugin_entries
+EOF
+
+if [ -z "$skill_names" ]; then
   exit 0
 fi
 
-# 各 Skill の手順内で checker を起動済みならこの hook は何もしない
-# この hook はチェックが走らなかった場合のフォールバックとして働く
-checked=$(jq -r '
-  select(.type == "assistant")
-  | .message.content[]?
-  | select(.type == "tool_use" and .name == "Task")
-  | .input.subagent_type // empty
-' "$transcript_path" 2>/dev/null | grep -c "skill-adherence-checker")
-if [ "$checked" -gt 0 ]; then
+# checker を起動済みならこの hook は何もしない
+# この hook は各 Skill の手順内でチェックが走らなかった場合のフォールバックとして働く
+if grep -q "skill-adherence-checker" "$transcript_path" 2>/dev/null; then
   exit 0
 fi
 
-# Skill ツール呼び出しから使用 Skill 名を集める
-all_skills=$(jq -r '
-  select(.type == "assistant")
-  | .message.content[]?
-  | select(.type == "tool_use" and .name == "Skill")
-  | .input.skill // empty
-' "$transcript_path" 2>/dev/null | sort -u)
-
-if [ -z "$all_skills" ]; then
-  exit 0
-fi
-
-# marketplace の plugin に属する Skill だけ残す
-skills=""
-for skill in $all_skills; do
-  plugin_name=${skill%%:*}
-  # 一覧と plugin 名の両方を改行で挟み、行全体の一致だけを拾う
-  # 単純な *"$plugin_name"* では dev が dev-docs に部分一致してしまう
-  case "
-$marketplace_plugins
-" in
-    *"
-$plugin_name
-"*)
-      skills="$skills $skill"
-      ;;
-  esac
-done
-skills=${skills# }
-
-if [ -z "$skills" ]; then
-  exit 0
-fi
-
-# Write / Edit / NotebookEdit の対象ファイルを成果物として集める
-files=$(jq -r '
-  select(.type == "assistant")
-  | .message.content[]?
-  | select(.type == "tool_use" and (.name == "Write" or .name == "Edit" or .name == "NotebookEdit"))
-  | .input.file_path // .input.notebook_path // empty
-' "$transcript_path" 2>/dev/null | sort -u)
-
-# 現存するファイルだけ残す
-existing_files=""
+# transcript に Skill 名が現れるかだけを見る
+# tool_use の構造に依存しないため、呼び出し形態が変わっても壊れにくい
+used_skills=""
 old_ifs=$IFS
 IFS='
 '
-for f in $files; do
-  if [ -f "$f" ]; then
-    existing_files="$existing_files$f
+for name in $skill_names; do
+  if grep -qF "$name" "$transcript_path" 2>/dev/null; then
+    used_skills="$used_skills$name
 "
   fi
 done
 IFS=$old_ifs
 
-if [ -z "$existing_files" ]; then
+if [ -z "$used_skills" ]; then
   exit 0
 fi
 
-reason="このセッションでは Skill を使って成果物を作成した。Task ツールで skill-adherence:skill-adherence-checker sub-agent を起動し、次の使用 Skill と成果物を伝えて Skill 違反を検査させること。この識別子が見つからないときは skill-adherence-checker という名前の sub-agent を探すこと。違反が報告されたら成果物を修正すること。違反がなければ何もせず終了してよい。
-使用 Skill: $skills
-成果物:
-$existing_files"
+reason="このセッションでは marketplace の Skill を使った形跡がある。skill-adherence スキルの手順に従い、使ったそれぞれの Skill とその Skill で作成、変更したファイルの対応を自分で判断したうえで、Skill 遵守チェックを実施すること。チェックが不要と判断した場合はその理由を述べて終了してよい。
+transcript に現れた Skill 名の候補:
+$used_skills"
 
 jq -n --arg reason "$reason" '{decision: "block", reason: $reason}'

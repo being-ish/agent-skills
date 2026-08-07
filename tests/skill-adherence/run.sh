@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # skill-adherence プラグインの detect-skill-usage.sh をテストする
-# 成果物の実在チェックがあるため、transcript は tmpdir に実ファイルを作って動的に生成する
+# インストール済み plugin の情報とその installPath 配下の skills を参照するため、両方を tmpdir に用意する
 
 set -u
 
@@ -52,128 +52,89 @@ assert_empty() {
   fi
 }
 
-# tool_use 1 件を含む assistant 行を JSONL として書く
-append_tool_use() {
-  transcript="$1"
-  tool="$2"
-  input_json="$3"
-  jq -nc --arg tool "$tool" --argjson inp "$input_json" \
-    '{type: "assistant", message: {content: [{type: "tool_use", name: $tool, input: $inp}]}}' \
-    >> "$transcript"
-}
-
 run_detect() {
   transcript="$1"
   active="${2:-false}"
+  installed="${3:-$installed_plugins}"
   jq -n --arg tp "$transcript" --argjson active "$active" \
     '{transcript_path: $tp, stop_hook_active: $active}' \
-    | SKILL_ADHERENCE_INSTALLED_PLUGINS="$installed_plugins" sh "$SCRIPT" 2>&1
+    | SKILL_ADHERENCE_INSTALLED_PLUGINS="$installed" sh "$SCRIPT" 2>&1
 }
 
-artifact="$tmpdir/artifact.md"
-echo "# doc" > "$artifact"
+# dev-docs が being-ish から、some-plugin が別 marketplace からインストールされた状態を作る
+install_path="$tmpdir/cache/dev-docs/1.0.0"
+mkdir -p "$install_path/skills/adr" "$install_path/skills/prd"
+other_path="$tmpdir/cache/some-plugin/1.0.0"
+mkdir -p "$other_path/skills/some-skill"
 
-# being-ish に dev-docs だけがインストールされている状態のフィクスチャー
 installed_plugins="$tmpdir/installed_plugins.json"
-cat > "$installed_plugins" <<'EOF'
-{
-  "plugins": {
-    "dev-docs@being-ish": [{"scope": "user"}],
-    "some-skill@some-vendor": [{"scope": "user"}]
+jq -n --arg dp "$install_path" --arg op "$other_path" '{
+  plugins: {
+    "dev-docs@being-ish": [{scope: "user", installPath: $dp}],
+    "some-plugin@some-vendor": [{scope: "user", installPath: $op}]
   }
-}
-EOF
+}' > "$installed_plugins"
 
-# Skill 使用あり + 編集あり → block
-t="$tmpdir/both.jsonl"
-: > "$t"
-append_tool_use "$t" "Skill" '{"skill": "dev-docs:adr"}'
-append_tool_use "$t" "Write" "{\"file_path\": \"$artifact\"}"
+# Skill 名が現れる → block
+t="$tmpdir/used.jsonl"
+echo 'Skill を dev-docs:adr で起動した' > "$t"
 out=$(run_detect "$t")
 rc=$?
-assert_exit "both: exit code" 0 "$rc"
-assert_contains "both: decision block" "$out" '"decision": "block"'
-assert_contains "both: sub-agent 起動指示" "$out" "skill-adherence:skill-adherence-checker"
-assert_contains "both: Skill 名" "$out" "dev-docs:adr"
-assert_contains "both: 成果物パス" "$out" "$artifact"
+assert_exit "used: exit code" 0 "$rc"
+assert_contains "used: decision block" "$out" '"decision": "block"'
+assert_contains "used: スキル起動指示" "$out" "skill-adherence スキルの手順"
+assert_contains "used: 検知した Skill 名" "$out" "dev-docs:adr"
 
-# Skill 使用なし → 何も出力しない
-t="$tmpdir/no-skill.jsonl"
-: > "$t"
-append_tool_use "$t" "Write" "{\"file_path\": \"$artifact\"}"
+# 使っていない Skill 名は候補に含めない
+case "$out" in
+  *"dev-docs:prd"*)
+    echo "NG: used: 使っていない Skill 名が含まれる" >&2
+    failures=$((failures + 1))
+    ;;
+  *)
+    echo "OK: used: 使っていない Skill 名は含まない"
+    ;;
+esac
+
+# Skill 名が現れない → 何も出力しない
+t="$tmpdir/unused.jsonl"
+echo 'ファイルを編集しただけ' > "$t"
 out=$(run_detect "$t")
 rc=$?
-assert_exit "no-skill: exit code" 0 "$rc"
-assert_empty "no-skill: 出力なし" "$out"
+assert_exit "unused: exit code" 0 "$rc"
+assert_empty "unused: 出力なし" "$out"
 
-# 編集なし → 何も出力しない
-t="$tmpdir/no-edit.jsonl"
-: > "$t"
-append_tool_use "$t" "Skill" '{"skill": "dev-docs:adr"}'
+# 別 marketplace の Skill 名だけ → 何も出力しない
+t="$tmpdir/other-marketplace.jsonl"
+echo 'some-plugin:some-skill を使った' > "$t"
 out=$(run_detect "$t")
 rc=$?
-assert_exit "no-edit: exit code" 0 "$rc"
-assert_empty "no-edit: 出力なし" "$out"
-
-# being-ish 以外の Skill のみ → 何も出力しない
-t="$tmpdir/other-skill.jsonl"
-: > "$t"
-append_tool_use "$t" "Skill" '{"skill": "some-vendor:some-skill"}'
-append_tool_use "$t" "Write" "{\"file_path\": \"$artifact\"}"
-out=$(run_detect "$t")
-rc=$?
-assert_exit "other-skill: exit code" 0 "$rc"
-assert_empty "other-skill: 出力なし" "$out"
-
-# 編集ファイルが現存しない → 何も出力しない
-t="$tmpdir/deleted.jsonl"
-: > "$t"
-append_tool_use "$t" "Skill" '{"skill": "dev-docs:adr"}'
-append_tool_use "$t" "Write" "{\"file_path\": \"$tmpdir/gone.md\"}"
-out=$(run_detect "$t")
-rc=$?
-assert_exit "deleted: exit code" 0 "$rc"
-assert_empty "deleted: 出力なし" "$out"
-
-# stop_hook_active → 何も出力しない
-t="$tmpdir/active.jsonl"
-: > "$t"
-append_tool_use "$t" "Skill" '{"skill": "dev-docs:adr"}'
-append_tool_use "$t" "Write" "{\"file_path\": \"$artifact\"}"
-out=$(run_detect "$t" true)
-rc=$?
-assert_exit "active: exit code" 0 "$rc"
-assert_empty "active: 出力なし" "$out"
+assert_exit "other-marketplace: exit code" 0 "$rc"
+assert_empty "other-marketplace: 出力なし" "$out"
 
 # checker を起動済み → 何も出力しない
 t="$tmpdir/checked.jsonl"
-: > "$t"
-append_tool_use "$t" "Skill" '{"skill": "dev-docs:adr"}'
-append_tool_use "$t" "Write" "{\"file_path\": \"$artifact\"}"
-append_tool_use "$t" "Task" '{"subagent_type": "skill-adherence:skill-adherence-checker"}'
+{
+  echo 'dev-docs:adr を使った'
+  echo 'skill-adherence-checker を起動した'
+} > "$t"
 out=$(run_detect "$t")
 rc=$?
 assert_exit "checked: exit code" 0 "$rc"
 assert_empty "checked: 出力なし" "$out"
 
-# 別の sub-agent の起動は checker 実施とみなさない
-t="$tmpdir/other-agent.jsonl"
-: > "$t"
-append_tool_use "$t" "Skill" '{"skill": "dev-docs:adr"}'
-append_tool_use "$t" "Write" "{\"file_path\": \"$artifact\"}"
-append_tool_use "$t" "Task" '{"subagent_type": "general-purpose"}'
-out=$(run_detect "$t")
+# stop_hook_active → 何も出力しない
+t="$tmpdir/active.jsonl"
+echo 'dev-docs:adr を使った' > "$t"
+out=$(run_detect "$t" true)
 rc=$?
-assert_exit "other-agent: exit code" 0 "$rc"
-assert_contains "other-agent: decision block" "$out" '"decision": "block"'
+assert_exit "active: exit code" 0 "$rc"
+assert_empty "active: 出力なし" "$out"
 
 # installed_plugins.json がない → 何も出力しない
 t="$tmpdir/no-installed.jsonl"
-: > "$t"
-append_tool_use "$t" "Skill" '{"skill": "dev-docs:adr"}'
-append_tool_use "$t" "Write" "{\"file_path\": \"$artifact\"}"
-out=$(jq -n --arg tp "$t" '{transcript_path: $tp, stop_hook_active: false}' \
-  | SKILL_ADHERENCE_INSTALLED_PLUGINS="$tmpdir/missing.json" sh "$SCRIPT" 2>&1)
+echo 'dev-docs:adr を使った' > "$t"
+out=$(run_detect "$t" false "$tmpdir/missing.json")
 rc=$?
 assert_exit "no-installed: exit code" 0 "$rc"
 assert_empty "no-installed: 出力なし" "$out"
