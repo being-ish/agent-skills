@@ -46,6 +46,13 @@ Screaming Architecture における機能の凝集単位。
 | システム全体 | `${CLAUDE_SKILL_DIR}/references/system-design-doc.md` |
 | feature 固有 | `${CLAUDE_SKILL_DIR}/references/feature-design-doc.md` |
 
+## 規則
+
+- 情報が不足しているセクションは「TBD」と記載する
+- feature 固有のものでシステム全体のものと差分がない場合は、システム全体 design doc に準ずる旨を明記する
+- 関連ドキュメントは本文の該当語句にインラインリンクを張る
+- その他はテンプレートのセクション構成と説明に従う
+
 ## 手順
 
 1. 生成 / 更新対象の design doc がシステム全体か feature 固有かを判断する
@@ -54,12 +61,12 @@ Screaming Architecture における機能の凝集単位。
     - 不明ならユーザーに確認する
 2. 該当するテンプレートを読み込む
 3. 既存の design doc があれば読み込み、更新対象とする
-4. ユーザーの要求と既存情報をもとに design doc を作成、更新する
-    - 情報が不足しているセクションは「TBD」と記載し、ユーザーに確認する
-    - feature 固有のものでシステム全体のものと差分がない場合は、システム全体 design doc に準ずる旨を明記する
-    - 関連ドキュメントは本文の該当語句にインラインリンクを張る
-    - その他はテンプレートのセクション構成に従う
+4. ユーザーの要求と既存情報をもとに、規則に従って design doc を作成、更新する
+    - 「TBD」と記載したセクションはユーザーに確認する
 5. PRD や ADR など関連ドキュメントが存在する場合、整合性をチェックし、矛盾があればユーザーに報告する
 6. plan-tasks スキルで作成したタスクリスト Artifact が本作業に存在する場合、design doc の変更に伴う更新が必要かを確認し、必要であれば更新する
 7. GitHub Issues を確認し、design doc の変更に伴い Issues の追加、変更、削除が必要であればユーザーに進言する
 8. 出力先に design doc を書き出す
+9. Task ツールで `skill-adherence:skill-adherence-checker` sub-agent を起動し、`dev-docs:design-doc` と書き出したファイルのパスを渡して Skill 違反を検査させる
+    - この sub-agent が使えない環境ではこの手順を省く
+    - 報告された違反を design doc に反映する

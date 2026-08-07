@@ -9,8 +9,11 @@ BEGIN {
   in_being_ish = 0
   kind = ""
 
+  # 箇条書き 1 アイテム 1 文チェックの識別子
+  CHECK_LIST_PERIOD = "list-period"
+
   # 文書ごとに適用するチェックを定義
-  skip["legal", "list-period"] = 1
+  skip["legal", CHECK_LIST_PERIOD] = 1
 }
 
 function count_matches(s, re,    n) {
@@ -91,7 +94,7 @@ function report(msg, n) {
   }
 
   # 箇条書きは 1 アイテム 1 文
-  if (!((kind, "list-period") in skip) && checked ~ /^[[:space:]]*([-*]|[0-9]+\.) /) {
+  if (!((kind, CHECK_LIST_PERIOD) in skip) && checked ~ /^[[:space:]]*([-*]|[0-9]+\.) /) {
     report("箇条書き内で句点「。」が使われています。1 アイテム 1 文に直し、複数文は下位項目にぶら下げてください", count_matches(checked, "。"))
   }
 }

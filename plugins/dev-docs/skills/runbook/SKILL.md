@@ -36,10 +36,10 @@ Screaming Architecture における機能の凝集単位。
 | 種類 | 書くもの |
 |---|---|
 | `maintenance` | 定常メンテナンス、計画的に繰り返す運用作業の手順 |
-| `incident` | 障害対応、アラートや症状を起点とした緊急時の手順 |
+| `incident` | 障害対応、アラートやインシデントを起点とした緊急時の手順 |
 
-`incident` の runbook は 1 ファイルに 1 症状とし、対応中に読む範囲を 1 つのオペレーションに絞る。
-症状からの逆引きは `incident/README.md` の索引が担う。
+`incident` の runbook は 1 ファイルに 1 インシデントとし、対応中に読む範囲を 1 つのオペレーションに絞る。
+インシデントからの逆引きは `incident/README.md` の索引が担う。
 
 ## 出力先
 
@@ -48,7 +48,7 @@ Screaming Architecture における機能の凝集単位。
 
 `/docs/features/` が存在しないリポジトリーでは、出力先をユーザーに確認する。
 
-内容から引けるよう、ファイル名は扱う作業や症状がわかるものとする。形式は kebab-case。
+内容から引けるよう、ファイル名は扱う作業やインシデントがわかるものとする。形式は kebab-case。
 
 緊急時に迅速に対応できるよう逆引きできるようにする。そのために `incident` の索引を `incident/README.md` に作る。
 
@@ -59,6 +59,16 @@ Screaming Architecture における機能の凝集単位。
 | `maintenance` | `${CLAUDE_SKILL_DIR}/references/maintenance-runbook.md` |
 | `incident` | `${CLAUDE_SKILL_DIR}/references/incident-runbook.md` |
 | `incident` の索引 | `${CLAUDE_SKILL_DIR}/references/incident-index.md` |
+
+## 規則
+
+- 1 ファイルに 1 つの作業または 1 つのインシデントを書く
+- 実行するコマンドは省略せずそのまま書く
+- 各手順には期待する結果と、失敗したときの分岐を書く
+- 判断を要する箇所は判断基準を明記する
+- 情報が不足しているセクションは「TBD」と記載する
+- 関連ドキュメントは本文の該当語句にインラインリンクを張る
+- その他はテンプレートのセクション構成と説明に従う
 
 ## 手順
 
@@ -73,17 +83,14 @@ Screaming Architecture における機能の凝集単位。
 4. 出力先ディレクトリーの既存 runbook を確認する
     - 更新なら該当ファイルを読み込み、更新対象とする
     - 新規なら内容が重複する既存 runbook がないかを確認する
-5. ユーザーの要求と既存情報をもとに runbook を作成、更新する
-    - 1 ファイルに 1 つの作業または 1 つの症状
-    - 実行するコマンドは省略せずそのまま書く
-    - 各手順には期待する結果と、失敗したときの分岐を書く
-    - 判断を要する箇所は判断基準を明記する
-    - 情報が不足しているセクションは「TBD」と記載し、ユーザーに確認する
-    - 関連ドキュメントは本文の該当語句にインラインリンクを張る
-    - その他はテンプレートのセクション構成に従う
+5. ユーザーの要求と既存情報をもとに、規則に従って runbook を作成、更新する
+    - 「TBD」と記載したセクションはユーザーに確認する
 6. `incident` の runbook を作成、更新した場合は `incident/README.md` の索引を更新する
     - 索引がなければ索引テンプレートから作成する
 7. PRD や design doc、ADR など関連ドキュメントが存在する場合、整合性をチェックし、矛盾があればユーザーに報告する
 8. plan-tasks スキルで作成したタスクリスト Artifact が本作業に存在する場合、runbook の変更に伴う更新が必要かを確認し、必要であれば更新する
 9. GitHub Issues を確認し、runbook の変更に伴い Issues の追加、変更、削除が必要であればユーザーに進言する
 10. 出力先に runbook を書き出す
+11. Task ツールで `skill-adherence:skill-adherence-checker` sub-agent を起動し、`dev-docs:runbook` と書き出したファイルのパスを渡して Skill 違反を検査させる
+    - この sub-agent が使えない環境ではこの手順を省く
+    - 報告された違反を runbook に反映する
