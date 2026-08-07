@@ -52,13 +52,25 @@ assert_empty() {
   fi
 }
 
+log_dir="$tmpdir/log"
+log_file="$log_dir/fallback.log"
+
 run_detect() {
   transcript="$1"
   active="${2:-false}"
   installed="${3:-$installed_plugins}"
   jq -n --arg tp "$transcript" --argjson active "$active" \
-    '{transcript_path: $tp, stop_hook_active: $active}' \
-    | SKILL_ADHERENCE_INSTALLED_PLUGINS="$installed" sh "$SCRIPT" 2>&1
+    '{transcript_path: $tp, stop_hook_active: $active, session_id: "sess-1", cwd: "/work/repo"}' \
+    | SKILL_ADHERENCE_INSTALLED_PLUGINS="$installed" SKILL_ADHERENCE_LOG_DIR="$log_dir" \
+      sh "$SCRIPT" 2>&1
+}
+
+count_log() {
+  if [ -f "$log_file" ]; then
+    wc -l < "$log_file" | tr -d ' '
+  else
+    echo 0
+  fi
 }
 
 # dev-docs が being-ish から、some-plugin が別 marketplace からインストールされた状態を作る
@@ -95,6 +107,13 @@ case "$out" in
     echo "OK: used: 使っていない Skill 名は含まない"
     ;;
 esac
+
+# 発火時はログが 1 行増える
+assert_exit "used: ログ行数" 1 "$(count_log)"
+logged=$(tail -n 1 "$log_file")
+assert_contains "used: ログの session_id" "$logged" '"session_id":"sess-1"'
+assert_contains "used: ログの cwd" "$logged" '"cwd":"/work/repo"'
+assert_contains "used: ログの Skill 名" "$logged" '"dev-docs:adr"'
 
 # Skill 名が現れない → 何も出力しない
 t="$tmpdir/unused.jsonl"
@@ -144,6 +163,9 @@ out=$(printf '{}' | sh "$SCRIPT" 2>&1)
 rc=$?
 assert_exit "no transcript: exit code" 0 "$rc"
 assert_empty "no transcript: 出力なし" "$out"
+
+# 発火しなかったケースではログが増えない
+assert_exit "ログ行数は発火回数と一致する" 1 "$(count_log)"
 
 if [ "$failures" -gt 0 ]; then
   echo "テスト失敗: $failures 件" >&2
