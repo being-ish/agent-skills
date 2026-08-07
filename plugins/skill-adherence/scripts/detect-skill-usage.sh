@@ -1,6 +1,5 @@
 #!/bin/sh
-# Stop 時に marketplace の Skill を使った形跡を検知し、
-# skill-adherence スキルによるチェックを main-agent に指示する
+# Stop 時に marketplace の Skill を使った形跡を検知して skill-adherence スキルによるチェックを main-agent に指示する
 # 使用 Skill と成果物の対応付けはセッションの文脈を持つ main-agent に任せる
 set -u
 
@@ -29,8 +28,7 @@ if [ -z "$transcript_path" ] || [ ! -f "$transcript_path" ]; then
 fi
 
 # checker を起動済みならこの hook は何もしない
-# この hook は各 Skill の手順内でチェックが走らなかった場合のフォールバックであり、
-# 一度 checker が走ったセッションではその後さらに作業しても発火しない
+# この hook は各 Skill の手順内でチェックが走らなかった場合のフォールバックであり、一度 checker が走ったセッションではその後さらに作業しても発火しない
 # 主経路は各 Skill 内のチェック手順なので、この取りこぼしは許容する
 # grep 1 回で済むためインストール情報の解析より前に置く
 if grep -q "skill-adherence-checker" "$transcript_path" 2>/dev/null; then
