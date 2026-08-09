@@ -65,6 +65,14 @@ run_detect() {
       sh "$SCRIPT" 2>&1
 }
 
+# Skill ツール呼び出しの transcript 行を作る
+skill_use() {
+  jq -cn --arg s "$1" '{
+    type: "assistant",
+    message: {content: [{type: "tool_use", name: "Skill", input: {skill: $s}}]}
+  }'
+}
+
 count_log() {
   if [ -f "$log_file" ]; then
     wc -l < "$log_file" | tr -d ' '
@@ -87,9 +95,9 @@ jq -n --arg dp "$install_path" --arg op "$other_path" '{
   }
 }' > "$installed_plugins"
 
-# Skill 名が現れる → block
+# Skill を呼び出した → block
 t="$tmpdir/used.jsonl"
-echo 'Skill を dev-docs:adr で起動した' > "$t"
+skill_use 'dev-docs:adr' > "$t"
 out=$(run_detect "$t")
 rc=$?
 assert_exit "used: exit code" 0 "$rc"
@@ -115,17 +123,25 @@ assert_contains "used: ログの session_id" "$logged" '"session_id":"sess-1"'
 assert_contains "used: ログの cwd" "$logged" '"cwd":"/work/repo"'
 assert_contains "used: ログの Skill 名" "$logged" '"dev-docs:adr"'
 
-# Skill 名が現れない → 何も出力しない
+# Skill を呼び出していない → 何も出力しない
 t="$tmpdir/unused.jsonl"
-echo 'ファイルを編集しただけ' > "$t"
+jq -cn '{type: "assistant", message: {content: [{type: "text", text: "ファイルを編集しただけ"}]}}' > "$t"
 out=$(run_detect "$t")
 rc=$?
 assert_exit "unused: exit code" 0 "$rc"
 assert_empty "unused: 出力なし" "$out"
 
-# 別 marketplace の Skill 名だけ → 何も出力しない
+# Skill 名が地の文にあるだけ → 何も出力しない
+t="$tmpdir/mentioned.jsonl"
+jq -cn '{type: "assistant", message: {content: [{type: "text", text: "利用可能な Skill: dev-docs:adr, dev-docs:prd"}]}}' > "$t"
+out=$(run_detect "$t")
+rc=$?
+assert_exit "mentioned: exit code" 0 "$rc"
+assert_empty "mentioned: 出力なし" "$out"
+
+# 別 marketplace の Skill だけ呼び出した → 何も出力しない
 t="$tmpdir/other-marketplace.jsonl"
-echo 'some-plugin:some-skill を使った' > "$t"
+skill_use 'some-plugin:some-skill' > "$t"
 out=$(run_detect "$t")
 rc=$?
 assert_exit "other-marketplace: exit code" 0 "$rc"
@@ -134,17 +150,28 @@ assert_empty "other-marketplace: 出力なし" "$out"
 # checker を起動済み → 何も出力しない
 t="$tmpdir/checked.jsonl"
 {
-  echo 'dev-docs:adr を使った'
-  echo 'skill-adherence-checker を起動した'
+  skill_use 'dev-docs:adr'
+  echo '{"type":"assistant","message":{"content":[{"type":"tool_use","name":"Agent","input":{"subagent_type":"skill-adherence:skill-adherence-checker"}}]}}'
 } > "$t"
 out=$(run_detect "$t")
 rc=$?
 assert_exit "checked: exit code" 0 "$rc"
 assert_empty "checked: 出力なし" "$out"
 
+# checker 名が地の文にあるだけ → 起動済みとみなさず発火する
+t="$tmpdir/checker-mentioned.jsonl"
+{
+  skill_use 'dev-docs:adr'
+  jq -cn '{type: "assistant", message: {content: [{type: "text", text: "利用可能な agent: skill-adherence:skill-adherence-checker"}]}}'
+} > "$t"
+out=$(run_detect "$t")
+rc=$?
+assert_exit "checker-mentioned: exit code" 0 "$rc"
+assert_contains "checker-mentioned: block する" "$out" '"decision": "block"'
+
 # stop_hook_active → 何も出力しない
 t="$tmpdir/active.jsonl"
-echo 'dev-docs:adr を使った' > "$t"
+skill_use 'dev-docs:adr' > "$t"
 out=$(run_detect "$t" true)
 rc=$?
 assert_exit "active: exit code" 0 "$rc"
@@ -152,7 +179,7 @@ assert_empty "active: 出力なし" "$out"
 
 # installed_plugins.json がない → 何も出力しない
 t="$tmpdir/no-installed.jsonl"
-echo 'dev-docs:adr を使った' > "$t"
+skill_use 'dev-docs:adr' > "$t"
 out=$(run_detect "$t" false "$tmpdir/missing.json")
 rc=$?
 assert_exit "no-installed: exit code" 0 "$rc"
@@ -165,7 +192,7 @@ assert_exit "no transcript: exit code" 0 "$rc"
 assert_empty "no transcript: 出力なし" "$out"
 
 # 発火しなかったケースではログが増えない
-assert_exit "ログ行数は発火回数と一致する" 1 "$(count_log)"
+assert_exit "ログ行数は発火回数と一致する" 2 "$(count_log)"
 
 if [ "$failures" -gt 0 ]; then
   echo "テスト失敗: $failures 件" >&2

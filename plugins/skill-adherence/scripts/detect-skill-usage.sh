@@ -30,8 +30,15 @@ fi
 # checker を起動済みならこの hook は何もしない
 # この hook は各 Skill の手順内でチェックが走らなかった場合のフォールバックであり、一度 checker が走ったセッションではその後さらに作業しても発火しない
 # 主経路は各 Skill 内のチェック手順なので、この取りこぼしは許容する
-# grep 1 回で済むためインストール情報の解析より前に置く
-if grep -q "skill-adherence-checker" "$transcript_path" 2>/dev/null; then
+# 判定は tool_use の subagent_type に限る
+# 単純な文字列 grep では、agent 一覧を載せた system-reminder に checker 名が常に含まれるため全セッションで真になる
+checked=$(jq -r '
+  select(.type == "assistant")
+  | .message.content[]?
+  | select(.type == "tool_use")
+  | .input.subagent_type // empty
+' "$transcript_path" 2>/dev/null | grep -c "skill-adherence-checker")
+if [ "$checked" -gt 0 ]; then
   exit 0
 fi
 
@@ -67,17 +74,32 @@ if [ -z "$skill_names" ]; then
   exit 0
 fi
 
-# transcript に Skill 名が現れるかだけを見る
-# tool_use の構造に依存しないため、呼び出し形態が変わっても壊れにくい
+# Skill ツールの呼び出し記録から使用 Skill 名を集める
+# 単純な文字列 grep では、利用可能な Skill 一覧を載せた system-reminder に全 Skill 名が含まれるため常に全件ヒットする
+invoked=$(jq -r '
+  select(.type == "assistant")
+  | .message.content[]?
+  | select(.type == "tool_use" and .name == "Skill")
+  | .input.skill // empty
+' "$transcript_path" 2>/dev/null | sort -u)
+
+if [ -z "$invoked" ]; then
+  exit 0
+fi
+
+# marketplace 配布の Skill だけ残す
 used_skills=""
 old_ifs=$IFS
 IFS='
 '
 for name in $skill_names; do
-  if grep -qF "$name" "$transcript_path" 2>/dev/null; then
-    used_skills="$used_skills$name
+  for used in $invoked; do
+    if [ "$name" = "$used" ]; then
+      used_skills="$used_skills$name
 "
-  fi
+      break
+    fi
+  done
 done
 IFS=$old_ifs
 
@@ -86,8 +108,8 @@ if [ -z "$used_skills" ]; then
 fi
 
 # 発火履歴を残し、この hook が必要かを頻度で判断できるようにする
-# 発火は取りこぼしの上限を示す粗い信号でしかない
-# Skill 名が会話に出ただけでも発火するため、内訳は transcript を見て人が判断する
+# 発火は取りこぼしの上限を示す信号でしかない
+# 成果物の有無までは見ないため、チェックが実際に必要だったかは transcript を見て人が判断する
 # ログの書き込みに失敗しても block 処理は続ける
 session_id=$(printf '%s' "$input" | jq -r '.session_id // empty' 2>/dev/null)
 cwd=$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)
