@@ -3,7 +3,7 @@
   "name": "skill-adherence",
   "displayName": "Skill Adherence",
   "description": "Skill に準拠した成果物となっているかをチェックするプラグイン",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "being-ish",
     "email": "dev@being-i.sh"
