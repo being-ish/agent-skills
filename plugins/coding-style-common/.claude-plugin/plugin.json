@@ -3,7 +3,7 @@
   "name": "coding-style-common",
   "displayName": "Common Coding Style",
   "description": "特定の言語に依存しない、プログラミング言語共通の書き方の指針を提供するプラグイン",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": {
     "name": "being-ish",
     "email": "dev@being-i.sh"
