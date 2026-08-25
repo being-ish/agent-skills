@@ -5,7 +5,7 @@
     "email": "dev@being-i.sh"
   },
   "description": "being-ish のエージェントスキル集",
-  "version": "1.1.1",
+  "version": "1.2.1",
   "plugins": [
     {
       "name": "plan-tasks",
