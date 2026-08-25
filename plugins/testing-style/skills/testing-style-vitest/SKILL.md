@@ -17,6 +17,21 @@ Vitest でテストを書くときの指針。言語非依存の規則は `testi
 
 ## 規則
 
+### globals を使わない
+
+`globals: true` を設定せず、`import.meta.vitest` から destructuring で取り出す。グローバルを汚さず、依存が明示できる。型定義の追加設定も不要になる。
+
+```ts
+const { describe, it, expect, vi } = import.meta.vitest;
+```
+
+### test と it の使い分け
+
+テストケース名の言語で選ぶ。`it` は英語の文として読める名前が前提のため。
+
+- テストケース名を日本語で書くときは `test` を使う
+- テストケース名を英語で書くときは `it` を使う
+
 ### モック
 
 #### 対象
