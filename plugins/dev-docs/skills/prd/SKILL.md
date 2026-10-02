@@ -13,6 +13,7 @@ PRD は Product Requirements Document の略で、何を作るか、なぜ作る
 
 | ドキュメント | 書くもの |
 |---|---|
+| research | 判断の材料となる事実 |
 | PRD | 要件、制約、スコープ |
 | ADR | 決定とその理由 |
 | design doc | 実現方法、現時点の設計 |

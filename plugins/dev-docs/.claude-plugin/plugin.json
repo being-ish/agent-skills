@@ -2,8 +2,8 @@
   "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
   "name": "dev-docs",
   "displayName": "Dev Docs Generator",
-  "description": "PRD、design doc、ADR、runbook、postmortem を生成、更新するスキル集",
-  "version": "1.5.1",
+  "description": "開発関連文書を生成、更新するスキル集",
+  "version": "1.6.0",
   "author": {
     "name": "being-ish",
     "email": "dev@being-i.sh"
@@ -12,6 +12,7 @@
   "license": "MIT",
   "keywords": [
     "documentation",
+    "research",
     "prd",
     "design-doc",
     "adr",
