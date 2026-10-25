@@ -1,6 +1,6 @@
 ---
 name: postmortem
-description: postmortem を生成、更新する。障害の事後分析、再発防止策の記録に使う
+description: postmortem に関するルール。障害の事後分析、再発防止策の記録に使う。postmortem を作成、更新する際に必ず使う。1 文 / 節の修正、追記も対象とする。
 ---
 
 # postmortem の生成と更新

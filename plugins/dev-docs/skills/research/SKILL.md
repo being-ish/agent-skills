@@ -1,6 +1,6 @@
 ---
 name: research
-description: research を生成、更新する。技術、仕様、市場、法規制など、判断の材料となる事実の記録に使う
+description: research に関するルール。技術、仕様、市場、法規制など、判断の材料となる事実の記録に使う。research を作成、更新する際に必ず使う。1 文 / 節の修正、追記も対象とする。
 ---
 
 # research の生成と更新

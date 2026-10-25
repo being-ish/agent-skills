@@ -1,6 +1,6 @@
 ---
 name: design-doc
-description: design doc を生成、更新する。大まかなアーキテクチャー設計やどう作るかの定義に使う
+description: design doc に関するルール。大まかなアーキテクチャー設計やどう作るかの定義に使う。design doc を作成、更新する際に必ず使う。1 文 / 節の修正、追記も対象とする。
 ---
 
 # design doc の生成と更新
