@@ -1,6 +1,6 @@
 ---
 name: testing-style-vitest
-description: Vitest でのテストの書き方の指針。TypeScript や JavaScript のテストを書く、変更する前に必ず読む。vi.mock でモックする対象の選び方と importOriginal の使い方を定めた指針
+description: Vitest でのテストの書き方の指針。TypeScript や JavaScript のテストを書く、変更する前に必ず読む。モックする対象の選び方と importOriginal の使い方、リセット方法を定めた指針
 user-invocable: false
 paths:
   - "**/*.ts"
