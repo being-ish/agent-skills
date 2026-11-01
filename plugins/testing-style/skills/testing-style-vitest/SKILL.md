@@ -53,6 +53,22 @@ vi.mock("./config", async (importOriginal) => ({
 }));
 ```
 
+#### リセット
+
+mock とグローバルのリセットは設定で強制する。テストに `afterEach` を書かない。テストごとに mock の設定は消えるため、スイート共通の実装は `beforeAll` でなく `beforeEach` で設定する。
+
+設定ファイルに次を指定する。
+
+```ts
+export default defineConfig({
+  test: {
+    mockReset: true,
+    unstubGlobals: true,
+    restoreMocks: true,
+  },
+});
+```
+
 ## 手順
 
 1. 規則に従ってテストを書く
