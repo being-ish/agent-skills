@@ -72,7 +72,7 @@ export default defineConfig({
 ## 手順
 
 1. 規則に従ってテストを書く
-2. Task ツールで `skill-adherence:skill-adherence-checker` sub-agent を起動し規則違反をチェックさせる
+2. Agent ツールで `skill-adherence:skill-adherence-checker` sub-agent を起動し規則違反をチェックさせる
     - この sub-agent が使えない環境ではこの検査を省く
     - 次を渡す
         - `testing-style:testing-style-vitest`
