@@ -13,7 +13,7 @@ description: 成果物が使用した Skill に沿っているかをチェック
     - ユーザーが対象を指定していればそれに従う
     - 指定がなければセッションの文脈から、Skill ごとにその Skill の指示で作成、変更したファイルを組にする
     - その Skill と無関係なファイルは組から外す
-2. 組ごとに Task ツールで `skill-adherence:skill-adherence-checker` sub-agent を起動する
+2. 組ごとに Agent ツールで `skill-adherence:skill-adherence-checker` sub-agent を起動する
     - Skill 名と成果物ファイルのパスをプロンプトで渡す
     - 1 回の検査範囲を狭く保つため、Skill をまたいでまとめない
 3. 報告された違反を成果物に反映する
